@@ -165,6 +165,54 @@ final class Geo
     }
 
     /**
+     * Convert a bearing in degrees (0-360) to a cardinal or intercardinal direction.
+     */
+    public static function compassDirection(float $bearing): string
+    {
+        $bearing = fmod($bearing, 360.0);
+
+        if ($bearing < 0.0) {
+            $bearing += 360.0;
+        }
+
+        $directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+        $index = (int) round($bearing / 45.0) % 8;
+
+        return $directions[$index];
+    }
+
+    /**
+     * Calculate the area of a polygon in square meters using the Shoelace formula
+     * adapted for geodesic coordinates.
+     *
+     * @param  array<Coordinate>  $polygon  Array of Coordinate objects forming the polygon vertices
+     */
+    public static function area(array $polygon): float
+    {
+        $count = count($polygon);
+
+        if ($count < 3) {
+            return 0.0;
+        }
+
+        $area = 0.0;
+
+        for ($i = 0; $i < $count; $i++) {
+            $j = ($i + 1) % $count;
+
+            $latI = deg2rad($polygon[$i]->latitude);
+            $latJ = deg2rad($polygon[$j]->latitude);
+            $dLng = deg2rad($polygon[$j]->longitude - $polygon[$i]->longitude);
+
+            $area += $dLng * (2 + sin($latI) + sin($latJ));
+        }
+
+        $area = abs($area) * 6_371_000.0 ** 2 / 2;
+
+        return $area;
+    }
+
+    /**
      * Calculate the destination coordinate given a start point, bearing, and distance.
      */
     public static function destination(Coordinate $start, float $bearing, float $distance, string $unit = 'km'): Coordinate

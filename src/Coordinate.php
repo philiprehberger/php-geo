@@ -18,6 +18,7 @@ final readonly class Coordinate implements JsonSerializable, Stringable
     public function __construct(
         public float $latitude,
         public float $longitude,
+        public ?float $elevation = null,
     ) {}
 
     /**
@@ -29,6 +30,22 @@ final readonly class Coordinate implements JsonSerializable, Stringable
             && $this->latitude <= 90.0
             && $this->longitude >= -180.0
             && $this->longitude <= 180.0;
+    }
+
+    /**
+     * Return a new Coordinate with the given elevation in meters.
+     */
+    public function withElevation(float $meters): self
+    {
+        return new self($this->latitude, $this->longitude, $meters);
+    }
+
+    /**
+     * Get the elevation in meters, or null if not set.
+     */
+    public function getElevation(): ?float
+    {
+        return $this->elevation;
     }
 
     /**

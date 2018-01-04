@@ -171,6 +171,101 @@ class GeoTest extends TestCase
         $this->assertEqualsWithDelta(0.0, $dest->longitude, 0.01);
     }
 
+    public function test_compass_direction_cardinal_bearings(): void
+    {
+        $this->assertSame('N', Geo::compassDirection(0.0));
+        $this->assertSame('NE', Geo::compassDirection(45.0));
+        $this->assertSame('E', Geo::compassDirection(90.0));
+        $this->assertSame('SE', Geo::compassDirection(135.0));
+        $this->assertSame('S', Geo::compassDirection(180.0));
+        $this->assertSame('SW', Geo::compassDirection(225.0));
+        $this->assertSame('W', Geo::compassDirection(270.0));
+        $this->assertSame('NW', Geo::compassDirection(315.0));
+    }
+
+    public function test_compass_direction_boundary_values(): void
+    {
+        $this->assertSame('N', Geo::compassDirection(22.4));
+        $this->assertSame('NE', Geo::compassDirection(22.5));
+        $this->assertSame('NE', Geo::compassDirection(67.4));
+        $this->assertSame('E', Geo::compassDirection(67.5));
+        $this->assertSame('E', Geo::compassDirection(112.4));
+        $this->assertSame('SE', Geo::compassDirection(112.5));
+        $this->assertSame('SE', Geo::compassDirection(157.4));
+        $this->assertSame('S', Geo::compassDirection(157.5));
+        $this->assertSame('S', Geo::compassDirection(202.4));
+        $this->assertSame('SW', Geo::compassDirection(202.5));
+        $this->assertSame('SW', Geo::compassDirection(247.4));
+        $this->assertSame('W', Geo::compassDirection(247.5));
+        $this->assertSame('W', Geo::compassDirection(292.4));
+        $this->assertSame('NW', Geo::compassDirection(292.5));
+        $this->assertSame('NW', Geo::compassDirection(337.4));
+        $this->assertSame('N', Geo::compassDirection(337.5));
+    }
+
+    public function test_compass_direction_full_circle(): void
+    {
+        $this->assertSame('N', Geo::compassDirection(360.0));
+    }
+
+    public function test_with_elevation_and_get_elevation(): void
+    {
+        $coord = new Coordinate(40.7128, -74.0060);
+        $this->assertNull($coord->getElevation());
+
+        $elevated = $coord->withElevation(100.5);
+        $this->assertSame(100.5, $elevated->getElevation());
+        $this->assertSame(40.7128, $elevated->latitude);
+        $this->assertSame(-74.006, $elevated->longitude);
+
+        // Original remains unchanged
+        $this->assertNull($coord->getElevation());
+    }
+
+    public function test_with_elevation_negative(): void
+    {
+        $coord = new Coordinate(0.0, 0.0);
+        $below = $coord->withElevation(-50.0);
+        $this->assertSame(-50.0, $below->getElevation());
+    }
+
+    public function test_area_square_polygon(): void
+    {
+        // A roughly 1-degree square at the equator (~111 km x 111 km ≈ 12321 km²)
+        $polygon = [
+            new Coordinate(0.0, 0.0),
+            new Coordinate(0.0, 1.0),
+            new Coordinate(1.0, 1.0),
+            new Coordinate(1.0, 0.0),
+        ];
+
+        $area = Geo::area($polygon);
+
+        // Expected ~12,308 km² = ~1.2308e10 m²
+        $this->assertEqualsWithDelta(1.2308e10, $area, 1.0e9);
+    }
+
+    public function test_area_triangle(): void
+    {
+        $polygon = [
+            new Coordinate(0.0, 0.0),
+            new Coordinate(0.0, 1.0),
+            new Coordinate(1.0, 0.0),
+        ];
+
+        $area = Geo::area($polygon);
+
+        // Triangle is half the square, ~6154 km² = ~6.154e9 m²
+        $this->assertEqualsWithDelta(6.154e9, $area, 5.0e8);
+    }
+
+    public function test_area_insufficient_points(): void
+    {
+        $this->assertSame(0.0, Geo::area([]));
+        $this->assertSame(0.0, Geo::area([new Coordinate(0.0, 0.0)]));
+        $this->assertSame(0.0, Geo::area([new Coordinate(0.0, 0.0), new Coordinate(1.0, 1.0)]));
+    }
+
     public function test_units_enum_earth_radius(): void
     {
         $this->assertSame(6371.0, Units::Kilometers->earthRadius());

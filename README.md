@@ -91,6 +91,39 @@ $start = new Coordinate(0.0, 0.0);
 $dest = Geo::destination($start, 0.0, 100.0); // bearing=0 (north), 100 km
 ```
 
+### Compass Direction
+
+```php
+$bearing = Geo::bearing($nyc, $la);
+$direction = Geo::compassDirection($bearing); // e.g. 'SW'
+
+Geo::compassDirection(0.0);   // 'N'
+Geo::compassDirection(90.0);  // 'E'
+Geo::compassDirection(225.0); // 'SW'
+```
+
+### Elevation
+
+```php
+$coord = new Coordinate(40.7128, -74.0060);
+$elevated = $coord->withElevation(100.5); // New Coordinate with elevation
+$elevated->getElevation(); // 100.5
+$coord->getElevation();    // null (original unchanged)
+```
+
+### Polygon Area
+
+```php
+$polygon = [
+    new Coordinate(0.0, 0.0),
+    new Coordinate(0.0, 1.0),
+    new Coordinate(1.0, 1.0),
+    new Coordinate(1.0, 0.0),
+];
+
+$area = Geo::area($polygon); // Area in square meters
+```
+
 ### Units
 
 Supported units: `km` (kilometers), `mi` (miles), `m` (meters), `nmi` (nautical miles).
@@ -114,6 +147,10 @@ Geo::distance($a, $b, 'nmi');  // nautical miles
 | `Geo::bearing($from, $to)` | Initial bearing in degrees |
 | `Geo::midpoint($a, $b)` | Geographic midpoint |
 | `Geo::destination($start, $bearing, $distance, $unit)` | Destination from start given bearing and distance |
+| `Geo::compassDirection($bearing)` | Convert bearing to cardinal/intercardinal direction |
+| `Geo::area($polygon)` | Polygon area in square meters (Shoelace formula) |
+| `Coordinate::withElevation($meters)` | Return new Coordinate with elevation |
+| `Coordinate::getElevation()` | Get elevation in meters or null |
 
 ---
 
