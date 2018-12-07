@@ -6,7 +6,6 @@
 
 Geospatial utilities for distance, bounding box, and point-in-polygon calculations.
 
----
 
 ## Requirements
 
@@ -16,7 +15,6 @@ Geospatial utilities for distance, bounding box, and point-in-polygon calculatio
 
 No external dependencies.
 
----
 
 ## Installation
 
@@ -24,7 +22,6 @@ No external dependencies.
 composer require philiprehberger/php-geo
 ```
 
----
 
 ## Usage
 
@@ -134,7 +131,6 @@ Geo::distance($a, $b, 'm');    // meters
 Geo::distance($a, $b, 'nmi');  // nautical miles
 ```
 
----
 
 ## API
 
@@ -152,7 +148,6 @@ Geo::distance($a, $b, 'nmi');  // nautical miles
 | `Coordinate::withElevation($meters)` | Return new Coordinate with elevation |
 | `Coordinate::getElevation()` | Get elevation in meters or null |
 
----
 
 ## Development
 
