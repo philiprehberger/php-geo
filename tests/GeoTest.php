@@ -273,4 +273,125 @@ class GeoTest extends TestCase
         $this->assertSame(6_371_000.0, Units::Meters->earthRadius());
         $this->assertSame(3440.065, Units::NauticalMiles->earthRadius());
     }
+
+    public function test_encode_geohash_known_coordinate(): void
+    {
+        $coord = new Coordinate(57.64911, 10.40744);
+        $hash = Geo::encodeGeohash($coord, 11);
+
+        $this->assertSame('u4pruydqqvj', $hash);
+    }
+
+    public function test_decode_geohash_back_to_coordinate(): void
+    {
+        $hash = 'u4pruydqqvj';
+        $decoded = Geo::decodeGeohash($hash);
+
+        $this->assertEqualsWithDelta(57.64911, $decoded->latitude, 0.001);
+        $this->assertEqualsWithDelta(10.40744, $decoded->longitude, 0.001);
+    }
+
+    public function test_geohash_bounds_returns_bounding_box(): void
+    {
+        $bounds = Geo::geohashBounds('u4pruydqqvj');
+
+        $this->assertInstanceOf(BoundingBox::class, $bounds);
+        $this->assertLessThan($bounds->maxLat, $bounds->minLat);
+        $this->assertLessThan($bounds->maxLng, $bounds->minLng);
+        $this->assertTrue($bounds->contains(new Coordinate(57.64911, 10.40744)));
+    }
+
+    public function test_geohash_roundtrip(): void
+    {
+        $original = new Coordinate(48.8566, 2.3522);
+        $hash = Geo::encodeGeohash($original, 12);
+        $decoded = Geo::decodeGeohash($hash);
+
+        $this->assertEqualsWithDelta($original->latitude, $decoded->latitude, 0.001);
+        $this->assertEqualsWithDelta($original->longitude, $decoded->longitude, 0.001);
+    }
+
+    public function test_encode_polyline_known_path(): void
+    {
+        $coordinates = [
+            new Coordinate(38.5, -120.2),
+            new Coordinate(40.7, -120.95),
+            new Coordinate(43.252, -126.453),
+        ];
+
+        $encoded = Geo::encodePolyline($coordinates);
+
+        $this->assertSame('_p~iF~ps|U_ulLnnqC_mqNvxq`@', $encoded);
+    }
+
+    public function test_decode_polyline_known_string(): void
+    {
+        $decoded = Geo::decodePolyline('_p~iF~ps|U_ulLnnqC_mqNvxq`@');
+
+        $this->assertCount(3, $decoded);
+        $this->assertEqualsWithDelta(38.5, $decoded[0]->latitude, 0.001);
+        $this->assertEqualsWithDelta(-120.2, $decoded[0]->longitude, 0.001);
+        $this->assertEqualsWithDelta(40.7, $decoded[1]->latitude, 0.001);
+        $this->assertEqualsWithDelta(-120.95, $decoded[1]->longitude, 0.001);
+        $this->assertEqualsWithDelta(43.252, $decoded[2]->latitude, 0.001);
+        $this->assertEqualsWithDelta(-126.453, $decoded[2]->longitude, 0.001);
+    }
+
+    public function test_polyline_roundtrip(): void
+    {
+        $original = [
+            new Coordinate(51.5074, -0.1278),
+            new Coordinate(48.8566, 2.3522),
+            new Coordinate(40.4168, -3.7038),
+        ];
+
+        $encoded = Geo::encodePolyline($original);
+        $decoded = Geo::decodePolyline($encoded);
+
+        $this->assertCount(3, $decoded);
+        for ($i = 0; $i < 3; $i++) {
+            $this->assertEqualsWithDelta($original[$i]->latitude, $decoded[$i]->latitude, 0.001);
+            $this->assertEqualsWithDelta($original[$i]->longitude, $decoded[$i]->longitude, 0.001);
+        }
+    }
+
+    public function test_route_distance_sum_of_segments(): void
+    {
+        $nyc = new Coordinate(40.7128, -74.0060);
+        $chicago = new Coordinate(41.8781, -87.6298);
+        $la = new Coordinate(33.9425, -118.4081);
+
+        $route = [$nyc, $chicago, $la];
+        $total = Geo::routeDistance($route);
+
+        $segmentA = Geo::distance($nyc, $chicago);
+        $segmentB = Geo::distance($chicago, $la);
+
+        $this->assertEqualsWithDelta($segmentA + $segmentB, $total, 0.01);
+    }
+
+    public function test_route_distance_in_miles(): void
+    {
+        $a = new Coordinate(40.7128, -74.0060);
+        $b = new Coordinate(41.8781, -87.6298);
+        $c = new Coordinate(33.9425, -118.4081);
+
+        $totalMiles = Geo::routeDistance([$a, $b, $c], Units::Miles);
+        $totalKm = Geo::routeDistance([$a, $b, $c]);
+
+        // Miles should be less than km
+        $this->assertLessThan($totalKm, $totalMiles);
+        $this->assertGreaterThan(0.0, $totalMiles);
+    }
+
+    public function test_route_distance_single_point(): void
+    {
+        $point = new Coordinate(40.7128, -74.0060);
+        $this->assertSame(0.0, Geo::routeDistance([$point]));
+    }
+
+    public function test_route_distance_empty_array(): void
+    {
+        $this->assertSame(0.0, Geo::routeDistance([]));
+    }
 }

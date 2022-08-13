@@ -1,12 +1,15 @@
 # PHP Geo
 
 [![Tests](https://github.com/philiprehberger/php-geo/actions/workflows/tests.yml/badge.svg)](https://github.com/philiprehberger/php-geo/actions/workflows/tests.yml)
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/philiprehberger/php-geo.svg)](https://packagist.org/packages/philiprehberger/php-geo)
+[![Packagist Version](https://img.shields.io/packagist/v/philiprehberger/php-geo.svg)](https://packagist.org/packages/philiprehberger/php-geo)
+[![GitHub Release](https://img.shields.io/github/v/release/philiprehberger/php-geo)](https://github.com/philiprehberger/php-geo/releases)
+[![Last Updated](https://img.shields.io/github/last-commit/philiprehberger/php-geo)](https://github.com/philiprehberger/php-geo/commits/main)
 [![License](https://img.shields.io/github/license/philiprehberger/php-geo)](LICENSE)
+[![Bug Reports](https://img.shields.io/github/issues/philiprehberger/php-geo/bug)](https://github.com/philiprehberger/php-geo/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
+[![Feature Requests](https://img.shields.io/github/issues/philiprehberger/php-geo/enhancement)](https://github.com/philiprehberger/php-geo/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
 [![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ec6cb9)](https://github.com/sponsors/philiprehberger)
 
 Geospatial utilities for distance, bounding box, and point-in-polygon calculations.
-
 
 ## Requirements
 
@@ -17,7 +20,6 @@ Geospatial utilities for distance, bounding box, and point-in-polygon calculatio
 ```bash
 composer require philiprehberger/php-geo
 ```
-
 
 ## Usage
 
@@ -117,6 +119,40 @@ $polygon = [
 $area = Geo::area($polygon); // Area in square meters
 ```
 
+### Geohash Encoding/Decoding
+
+```php
+$coord = new Coordinate(57.64911, 10.40744);
+$hash = Geo::encodeGeohash($coord);          // 'u4pruydqqvj8'
+$decoded = Geo::decodeGeohash($hash);        // Coordinate near original
+$bounds = Geo::geohashBounds($hash);         // BoundingBox of geohash cell
+```
+
+### Polyline Encoding/Decoding
+
+```php
+$coordinates = [
+    new Coordinate(38.5, -120.2),
+    new Coordinate(40.7, -120.95),
+    new Coordinate(43.252, -126.453),
+];
+
+$encoded = Geo::encodePolyline($coordinates);  // '_p~iF~ps|U_ulLnnqC_mqNvxq`@'
+$decoded = Geo::decodePolyline($encoded);      // Array of Coordinate objects
+```
+
+### Route Distance
+
+```php
+$route = [
+    new Coordinate(40.7128, -74.0060),
+    new Coordinate(41.8781, -87.6298),
+    new Coordinate(33.9425, -118.4081),
+];
+
+$total = Geo::routeDistance($route); // Total distance in km
+```
+
 ### Units
 
 Supported units: `km` (kilometers), `mi` (miles), `m` (meters), `nmi` (nautical miles).
@@ -126,7 +162,6 @@ Geo::distance($a, $b, 'mi');   // miles
 Geo::distance($a, $b, 'm');    // meters
 Geo::distance($a, $b, 'nmi');  // nautical miles
 ```
-
 
 ## API
 
@@ -141,9 +176,14 @@ Geo::distance($a, $b, 'nmi');  // nautical miles
 | `Geo::destination($start, $bearing, $distance, $unit)` | Destination from start given bearing and distance |
 | `Geo::compassDirection($bearing)` | Convert bearing to cardinal/intercardinal direction |
 | `Geo::area($polygon)` | Polygon area in square meters (Shoelace formula) |
+| `Geo::encodeGeohash($coord, $precision)` | Encode coordinate to geohash string |
+| `Geo::decodeGeohash($hash)` | Decode geohash to coordinate (center of cell) |
+| `Geo::geohashBounds($hash)` | Get bounding box of a geohash cell |
+| `Geo::encodePolyline($coordinates)` | Encode coordinates to Google polyline string |
+| `Geo::decodePolyline($encoded)` | Decode Google polyline string to coordinates |
+| `Geo::routeDistance($coordinates, $unit)` | Total distance along a multi-point route |
 | `Coordinate::withElevation($meters)` | Return new Coordinate with elevation |
 | `Coordinate::getElevation()` | Get elevation in meters or null |
-
 
 ## Development
 
@@ -151,9 +191,13 @@ Geo::distance($a, $b, 'nmi');  // nautical miles
 composer install
 vendor/bin/phpunit
 vendor/bin/pint --test
-vendor/bin/phpstan analyse
 ```
+
+## Support
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2)](https://www.linkedin.com/in/philiprehberger)
+[![All Packages](https://img.shields.io/badge/Packages-View%20All-blue)](https://github.com/philiprehberger/packages)
 
 ## License
 
-MIT
+[MIT](LICENSE)
