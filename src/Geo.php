@@ -241,7 +241,7 @@ final class Geo
         );
     }
 
-    private const string GEOHASH_ALPHABET = '0123456789bcdefghjkmnpqrstuvwxyz';
+    private const GEOHASH_ALPHABET = '0123456789bcdefghjkmnpqrstuvwxyz';
 
     /**
      * Encode a coordinate into a geohash string.
