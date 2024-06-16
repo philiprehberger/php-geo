@@ -1,13 +1,8 @@
 # PHP Geo
 
 [![Tests](https://github.com/philiprehberger/php-geo/actions/workflows/tests.yml/badge.svg)](https://github.com/philiprehberger/php-geo/actions/workflows/tests.yml)
-[![Packagist Version](https://img.shields.io/packagist/v/philiprehberger/php-geo.svg)](https://packagist.org/packages/philiprehberger/php-geo)
-[![GitHub Release](https://img.shields.io/github/v/release/philiprehberger/php-geo)](https://github.com/philiprehberger/php-geo/releases)
-[![Last Updated](https://img.shields.io/github/last-commit/philiprehberger/php-geo)](https://github.com/philiprehberger/php-geo/commits/main)
-[![License](https://img.shields.io/github/license/philiprehberger/php-geo)](LICENSE)
-[![Bug Reports](https://img.shields.io/github/issues/philiprehberger/php-geo/bug)](https://github.com/philiprehberger/php-geo/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
-[![Feature Requests](https://img.shields.io/github/issues/philiprehberger/php-geo/enhancement)](https://github.com/philiprehberger/php-geo/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
-[![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ec6cb9)](https://github.com/sponsors/philiprehberger)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/philiprehberger/php-geo.svg)](https://packagist.org/packages/philiprehberger/php-geo)
+[![Last updated](https://img.shields.io/github/last-commit/philiprehberger/php-geo)](https://github.com/philiprehberger/php-geo/commits/main)
 
 Geospatial utilities for distance, bounding box, and point-in-polygon calculations.
 
@@ -195,8 +190,21 @@ vendor/bin/pint --test
 
 ## Support
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2)](https://www.linkedin.com/in/philiprehberger)
-[![All Packages](https://img.shields.io/badge/Packages-View%20All-blue)](https://github.com/philiprehberger/packages)
+If you find this project useful:
+
+⭐ [Star the repo](https://github.com/philiprehberger/php-geo)
+
+🐛 [Report issues](https://github.com/philiprehberger/php-geo/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
+
+💡 [Suggest features](https://github.com/philiprehberger/php-geo/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
+
+❤️ [Sponsor development](https://github.com/sponsors/philiprehberger)
+
+🌐 [All Open Source Projects](https://philiprehberger.com/open-source-packages)
+
+💻 [GitHub Profile](https://github.com/philiprehberger)
+
+🔗 [LinkedIn Profile](https://www.linkedin.com/in/philiprehberger)
 
 ## License
 
