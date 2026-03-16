@@ -2,7 +2,6 @@
 
 [![Tests](https://github.com/philiprehberger/php-geo/actions/workflows/tests.yml/badge.svg)](https://github.com/philiprehberger/php-geo/actions/workflows/tests.yml)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/philiprehberger/php-geo.svg)](https://packagist.org/packages/philiprehberger/php-geo)
-[![Total Downloads](https://img.shields.io/packagist/dt/philiprehberger/php-geo.svg)](https://packagist.org/packages/philiprehberger/php-geo)
 [![PHP Version Require](https://img.shields.io/packagist/php-v/philiprehberger/php-geo.svg)](https://packagist.org/packages/philiprehberger/php-geo)
 [![License](https://img.shields.io/github/license/philiprehberger/php-geo)](LICENSE)
 
