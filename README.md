@@ -2,7 +2,6 @@
 
 [![Tests](https://github.com/philiprehberger/php-geo/actions/workflows/tests.yml/badge.svg)](https://github.com/philiprehberger/php-geo/actions/workflows/tests.yml)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/philiprehberger/php-geo.svg)](https://packagist.org/packages/philiprehberger/php-geo)
-[![PHP Version Require](https://img.shields.io/packagist/php-v/philiprehberger/php-geo.svg)](https://packagist.org/packages/philiprehberger/php-geo)
 [![License](https://img.shields.io/github/license/philiprehberger/php-geo)](LICENSE)
 
 Geospatial utilities for distance, bounding box, and point-in-polygon calculations.
@@ -118,33 +117,15 @@ Geo::distance($a, $b, 'nmi');  // nautical miles
 
 ---
 
-## Testing
+## Development
 
 ```bash
 composer install
 vendor/bin/phpunit
-```
-
-Code style:
-
-```bash
-vendor/bin/pint
-```
-
-Static analysis:
-
-```bash
+vendor/bin/pint --test
 vendor/bin/phpstan analyse
 ```
 
----
-
-## Changelog
-
-Please see [CHANGELOG.md](CHANGELOG.md) for recent changes.
-
----
-
 ## License
 
-The MIT License (MIT). Please see [LICENSE](LICENSE) for more information.
+MIT

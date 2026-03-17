@@ -1,13 +1,14 @@
 {
     "name": "philiprehberger/php-geo",
     "description": "Geospatial utilities for distance, bounding box, and point-in-polygon calculations",
-    "keywords": ["geospatial", "geo", "distance", "haversine", "vincenty", "bounding-box", "point-in-polygon", "coordinates"],
+    "keywords": ["geospatial", "geo", "distance", "haversine", "bounding-box", "point-in-polygon"],
     "homepage": "https://github.com/philiprehberger/php-geo",
     "license": "MIT",
     "type": "library",
     "authors": [
         {
             "name": "Philip Rehberger",
+            "email": "me@philiprehberger.com",
             "role": "Developer"
         }
     ],
