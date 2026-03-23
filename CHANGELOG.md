@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-03-22
+
+### Added
+- `compassDirection()` method to convert bearing to cardinal/intercardinal direction
+- `withElevation()` and `getElevation()` for optional elevation support on Coordinate
+- `area()` method to calculate polygon area in square meters using the Shoelace formula
+
 ## [1.0.3] - 2026-03-17
 
 ### Changed
