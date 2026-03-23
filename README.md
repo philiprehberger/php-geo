@@ -9,12 +9,7 @@ Geospatial utilities for distance, bounding box, and point-in-polygon calculatio
 
 ## Requirements
 
-| Dependency | Version |
-|------------|---------|
-| PHP        | ^8.2    |
-
-No external dependencies.
-
+- PHP 8.2+
 
 ## Installation
 
