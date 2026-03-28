@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-03-27
+
+### Added
+- Geohash encoding and decoding via `Geo::encodeGeohash()` and `Geo::decodeGeohash()`
+- Google Encoded Polyline support via `Geo::encodePolyline()` and `Geo::decodePolyline()`
+- `Geo::routeDistance()` for calculating total distance along a multi-point route
+
 ## [1.1.2] - 2026-03-23
 
 ### Changed

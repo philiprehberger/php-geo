@@ -240,4 +240,211 @@ final class Geo
             longitude: rad2deg($destLng),
         );
     }
+
+    private const string GEOHASH_ALPHABET = '0123456789bcdefghjkmnpqrstuvwxyz';
+
+    /**
+     * Encode a coordinate into a geohash string.
+     */
+    public static function encodeGeohash(Coordinate $coord, int $precision = 12): string
+    {
+        $minLat = -90.0;
+        $maxLat = 90.0;
+        $minLng = -180.0;
+        $maxLng = 180.0;
+
+        $hash = '';
+        $bit = 0;
+        $ch = 0;
+        $isLng = true;
+
+        while (strlen($hash) < $precision) {
+            if ($isLng) {
+                $mid = ($minLng + $maxLng) / 2;
+                if ($coord->longitude >= $mid) {
+                    $ch |= (1 << (4 - $bit));
+                    $minLng = $mid;
+                } else {
+                    $maxLng = $mid;
+                }
+            } else {
+                $mid = ($minLat + $maxLat) / 2;
+                if ($coord->latitude >= $mid) {
+                    $ch |= (1 << (4 - $bit));
+                    $minLat = $mid;
+                } else {
+                    $maxLat = $mid;
+                }
+            }
+
+            $isLng = ! $isLng;
+            $bit++;
+
+            if ($bit === 5) {
+                $hash .= self::GEOHASH_ALPHABET[$ch];
+                $bit = 0;
+                $ch = 0;
+            }
+        }
+
+        return $hash;
+    }
+
+    /**
+     * Decode a geohash string to a Coordinate (center of the bounding box).
+     */
+    public static function decodeGeohash(string $hash): Coordinate
+    {
+        $bounds = self::geohashBounds($hash);
+
+        return new Coordinate(
+            latitude: ($bounds->minLat + $bounds->maxLat) / 2,
+            longitude: ($bounds->minLng + $bounds->maxLng) / 2,
+        );
+    }
+
+    /**
+     * Get the bounding box of a geohash cell.
+     */
+    public static function geohashBounds(string $hash): BoundingBox
+    {
+        $minLat = -90.0;
+        $maxLat = 90.0;
+        $minLng = -180.0;
+        $maxLng = 180.0;
+        $isLng = true;
+
+        for ($i = 0; $i < strlen($hash); $i++) {
+            $charIndex = strpos(self::GEOHASH_ALPHABET, $hash[$i]);
+
+            if ($charIndex === false) {
+                break;
+            }
+
+            for ($bit = 4; $bit >= 0; $bit--) {
+                if ($isLng) {
+                    $mid = ($minLng + $maxLng) / 2;
+                    if (($charIndex >> $bit) & 1) {
+                        $minLng = $mid;
+                    } else {
+                        $maxLng = $mid;
+                    }
+                } else {
+                    $mid = ($minLat + $maxLat) / 2;
+                    if (($charIndex >> $bit) & 1) {
+                        $minLat = $mid;
+                    } else {
+                        $maxLat = $mid;
+                    }
+                }
+
+                $isLng = ! $isLng;
+            }
+        }
+
+        return new BoundingBox(
+            minLat: $minLat,
+            maxLat: $maxLat,
+            minLng: $minLng,
+            maxLng: $maxLng,
+        );
+    }
+
+    /**
+     * Encode an array of coordinates using Google's Encoded Polyline Algorithm.
+     *
+     * @param  array<Coordinate>  $coordinates
+     */
+    public static function encodePolyline(array $coordinates): string
+    {
+        $encoded = '';
+        $prevLat = 0;
+        $prevLng = 0;
+
+        foreach ($coordinates as $coord) {
+            $lat = (int) round($coord->latitude * 1e5);
+            $lng = (int) round($coord->longitude * 1e5);
+
+            $encoded .= self::encodePolylineValue($lat - $prevLat);
+            $encoded .= self::encodePolylineValue($lng - $prevLng);
+
+            $prevLat = $lat;
+            $prevLng = $lng;
+        }
+
+        return $encoded;
+    }
+
+    /**
+     * Decode a Google Encoded Polyline string to an array of Coordinates.
+     *
+     * @return array<Coordinate>
+     */
+    public static function decodePolyline(string $encoded): array
+    {
+        $coordinates = [];
+        $index = 0;
+        $lat = 0;
+        $lng = 0;
+        $length = strlen($encoded);
+
+        while ($index < $length) {
+            $lat += self::decodePolylineValue($encoded, $index);
+            $lng += self::decodePolylineValue($encoded, $index);
+
+            $coordinates[] = new Coordinate(
+                latitude: $lat / 1e5,
+                longitude: $lng / 1e5,
+            );
+        }
+
+        return $coordinates;
+    }
+
+    /**
+     * Calculate the total distance along a route of coordinates.
+     *
+     * @param  array<Coordinate>  $coordinates
+     */
+    public static function routeDistance(array $coordinates, Units $unit = Units::Kilometers): float
+    {
+        $total = 0.0;
+        $count = count($coordinates);
+
+        for ($i = 1; $i < $count; $i++) {
+            $total += self::distance($coordinates[$i - 1], $coordinates[$i], $unit->value);
+        }
+
+        return $total;
+    }
+
+    private static function encodePolylineValue(int $value): string
+    {
+        $value = $value < 0 ? ~($value << 1) : ($value << 1);
+        $encoded = '';
+
+        while ($value >= 0x20) {
+            $encoded .= chr((($value & 0x1F) | 0x20) + 63);
+            $value >>= 5;
+        }
+
+        $encoded .= chr($value + 63);
+
+        return $encoded;
+    }
+
+    private static function decodePolylineValue(string $encoded, int &$index): int
+    {
+        $result = 0;
+        $shift = 0;
+
+        do {
+            $byte = ord($encoded[$index]) - 63;
+            $index++;
+            $result |= ($byte & 0x1F) << $shift;
+            $shift += 5;
+        } while ($byte >= 0x20);
+
+        return ($result & 1) ? ~($result >> 1) : ($result >> 1);
+    }
 }
